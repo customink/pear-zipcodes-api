@@ -58,7 +58,7 @@ Route::get('/zips/boundaries', function (Request $request) {
 
 });
 
-Route::get('zips/search', function (Request $request) {
+Route::get('zips/reverse_geocode', function (Request $request) {
     $lat = $request->query('lat');
     $long = $request->query('long');
 
@@ -127,4 +127,17 @@ Route::get('zips/boundaries/random_zips', function (Request $request) {
 
 
     dd('pear-zip.dev/api/zips/boundaries/?q=' . implode(',', $output));
+});
+
+Route::get('zips/{zipcode}', function ( $zipcode ) {
+
+    $params = [
+       'index' => config('elasticsearch.index'),
+       'type' => 'zipcodes',
+        'id' => $zipcode,
+   ];
+
+    $response = ES::get($params);
+
+    return response()->json($response['_source']);
 });
