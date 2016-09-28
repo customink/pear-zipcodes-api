@@ -26,7 +26,7 @@ class ESearchResponseToGeojsonProcessor
     protected function mapResult($array) {
         return array_map(function ($result) {
             if ($result['found']) {
-                return $result['_source'];
+                return $this->formatEachResult($result['_source']);
             }
             return [
                 'type' => 'Feature',
@@ -39,6 +39,15 @@ class ESearchResponseToGeojsonProcessor
         }, $array);
     }
 
+    protected function formatEachResult($array) {
+        return [
+            'type' => $array['type'],
+            'properties' => [
+                'zipcode' => $array['properties']['GEOID10']
+            ],
+            'geometry' => $array['geometry'],
+        ];
+    }
     protected function filterResult($array) {
         return array_filter($array);
     }

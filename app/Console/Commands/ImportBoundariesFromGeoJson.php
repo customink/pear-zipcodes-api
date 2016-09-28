@@ -50,18 +50,18 @@ class ImportBoundariesFromGeoJson extends Command
         while (! $file->eof()) {
             $rawJson = rtrim(trim($file->fgets()), ',');
 
-            if (substr($rawJson, -1) === '}' and $rawJson[0] === '{') {
+            if (substr($rawJson, -1) === '}' and $rawJson[0] === '{') { // poor man's way to check if it's valid JSON
                 $count++;
 
                 $data = json_decode($rawJson);
                 $params['body'][] = [
-                    'index' => [
+                    'update' => [
                         '_index' => config('elasticsearch.index'),
-                        '_type' => 'zip_boundaries',
+                        '_type' => 'zipcodes',
                         '_id' => $data->properties->GEOID10,
                     ]
                 ];
-                $params['body'][] = $data;
+                $params['body'][] = ['doc' => $data, 'doc_as_upsert' => true];
                 if ($count % 50 == 0) {
                     $responses = \ES::bulk($params);
 
@@ -77,7 +77,7 @@ class ImportBoundariesFromGeoJson extends Command
         }
 
         if (!empty($params['body'])) {
-            $responses = \ES::bulk($params);
+            \ES::bulk($params);
         }
 
         $bar->finish();

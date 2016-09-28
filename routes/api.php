@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 Route::get('/test', function (Request $request) {
     $params = [
         'index' => config('elasticsearch.index'),
-        'type' => 'zip_boundaries',
+        'type' => 'zipcodes',
         'id' => '43451',
         'client' => [
             'verbose' => false
@@ -35,25 +35,17 @@ Route::get('/zips/boundaries', function (Request $request) {
     $wantsFile = $request->query('file');
     $params = [
         'index' => config('elasticsearch.index'),
-        'type' => 'zip_boundaries',
+        'type' => 'zipcodes',
         'body' => [
-            'aggs' => [
-                'viewport' => [
-                    'geo_bounds' => [
-                        'field' => 'geometry'
-                    ]
-                ]
-            ],
             'docs' => array_map(function ($zip) {
             return [
                 '_id' => $zip,
             ];
-        }, $zips)],
-        '_source' => ['exclude' => ['ZCTA5CE10']],
+        }, $zips)]
     ];
 
     $response = \ES::mget($params);
-    dd($response);
+
     $output = with(new App\Processors\ESearchResponseToGeojsonProcessor($response))->process();
 
     if ($wantsFile) {
@@ -72,7 +64,7 @@ Route::get('zips/search', function (Request $request) {
 
     $params = [
         'index' => config('elasticsearch.index'),
-        'type' => 'zip_boundaries',
+        'type' => 'zipcodes',
         'body' => [
             'query' => [
                 'bool' => [
@@ -118,7 +110,7 @@ Route::get('zips/search', function (Request $request) {
 Route::get('zips/boundaries/random_zips', function (Request $request) {
     $params = [
         'index' => config('elasticsearch.index'),
-        'type' => 'zip_boundaries',
+        'type' => 'zipcodes',
         '_source_include' => 'properties.GEOID10',
         'body' => [
             'query' => [
