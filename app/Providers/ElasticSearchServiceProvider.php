@@ -29,5 +29,9 @@ class ElasticSearchServiceProvider extends ServiceProvider
             $builder->setHosts(config('elasticsearch.hosts'));
             return $builder->build();
         }, true);
+
+        $this->app->bind('ResultProcessor', function () {
+           return new \App\Processors\ElasticSearch\Processor();
+        });
     }
 }
