@@ -44,6 +44,7 @@ class CreateElasticIndex extends Migration
                                     'MedianAge' => ['type' => 'float'],
                                     'MedianAgeMale' => ['type' => 'float'],
                                     'MedianAgeFemale' => ['type' => 'float'],
+                                    'ZipPoint' => ['type' => 'geo_point'],
                                     'Latitude' => ['type' => 'float'],
                                     'Longitude' => ['type' => 'float'],
                                     'Elevation' => ['type' => 'integer'],

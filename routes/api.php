@@ -42,10 +42,10 @@ Route::get('zips/boundaries', function (Request $request) {
         'type' => 'zipcodes',
         'body' => [
             'docs' => array_map(function ($zip) {
-            return [
-                '_id' => $zip,
-            ];
-        }, $zips)]
+                return [
+                    '_id' => $zip,
+                ];
+            }, $zips)]
     ];
 
     $response = \ES::mget($params);
@@ -69,7 +69,7 @@ Route::get('zips/boundaries', function (Request $request) {
 
 // Query q
 // Query file
-Route::get('zips/info', function ( Request $request ) {
+Route::get('zips/info', function (Request $request) {
     $zips = explode(',', $request->query('q'));
     $wantsFile = $request->query('file');
     $params = [
@@ -165,13 +165,13 @@ Route::get('zips/boundaries/random_zips', function (Request $request) {
     return 'pear-zip.dev/api/zips/boundaries/?q=' . implode(',', $output);
 });
 
-Route::get('zips/{zipcode}', function ( $zipcode ) {
+Route::get('zips/{zipcode}', function ($zipcode) {
 
     $params = [
-       'index' => config('elasticsearch.index'),
-       'type' => 'zipcodes',
+        'index' => config('elasticsearch.index'),
+        'type' => 'zipcodes',
         'id' => $zipcode,
-   ];
+    ];
 
     try {
         $response = ES::get($params);
@@ -183,7 +183,7 @@ Route::get('zips/{zipcode}', function ( $zipcode ) {
     return response()->jsend('success', $output);
 });
 
-Route::get('zips/{zipcode}/info', function ( $zipcode ) {
+Route::get('zips/{zipcode}/info', function ($zipcode) {
     $params = [
         'index' => config('elasticsearch.index'),
         'type' => 'zipcodes',
@@ -203,6 +203,57 @@ Route::get('zips/{zipcode}/info', function ( $zipcode ) {
     return response()->jsend('success', $output);
 });
 
+Route::get('zips/boundaries/search', function (Request $request) {
+    $city = $request->query('city');
+    $state = $request->query('state');
+    $wantsFile = $request->query('file');
+    $wantsGeoJson = $request->query('geojson');
+
+    $params = [
+        'index' => config('elasticsearch.index'),
+        'type' => 'zipcodes',
+        'body' => [
+            'from' => 0,
+            'size' => 5000,
+            'query' => [
+                'bool' => [
+                    'must' => [
+                        ['match' => [
+                            "properties.CityMixedCase" => [
+                                "query" => $city,
+                            ],
+                        ]],
+                        ['match' => [
+                            "properties.State" => [
+                                "query" => $state,
+                            ],
+                        ]]
+                    ],
+                ],
+            ]
+        ]
+    ];
+
+    $response = \ES::search($params);
+
+    /**
+     * @var $builder \App\Processors\ElasticSearch\OutputProcessor\ResultsOutputProcessor
+     */
+    $output = Result::search($response)->geojson()->compact()->getArray();
+
+    if ($wantsFile === 'true') {
+        $filePath = storage_path('app/data/' . uniqid() . '.geojson');
+        \File::put($filePath, json_encode($output));
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
+
+    if ($wantsGeoJson === 'true') {
+        return response()->json($output);
+    }
+
+    return response()->jsend('success', $output);
+});
+
 // Query: q
 // Query: add_geojson
 Route::get('cities/search', function (Request $request) {
@@ -214,7 +265,7 @@ Route::get('cities/search', function (Request $request) {
         'type' => 'zipcodes',
         'body' => [
             'sort' => [
-               ['properties.Population' => 'desc']
+                ['properties.Population' => 'desc']
             ],
 
 
@@ -252,6 +303,6 @@ Route::get('cities/search', function (Request $request) {
     return response()->jsend('success', $output);
 });
 
-Route::get('msa/search', function(Request $request) {
+Route::get('msa/search', function (Request $request) {
 
 });

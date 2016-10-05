@@ -40,7 +40,7 @@ class ImportZipInfoFromCsv extends Command
         $file = new \SplFileObject(config('elasticsearch.demographic_file'));
         $count = 0;
         $headers = [];
-        $bar = $this->output->createProgressBar(33500);
+        $bar = $this->output->createProgressBar(42000);
 
         $params = ['body' => []];
 
@@ -60,6 +60,9 @@ class ImportZipInfoFromCsv extends Command
                 }, $values);
 
                 $processedArray = array_combine($headers, $values);
+                if ($processedArray['Longitude'] != 0 and $processedArray['Latitude'] != 0 ) {
+                    $processedArray['ZipPoint'] = (object) ['lon' => $processedArray['Longitude'], 'lat' => $processedArray['Latitude']];
+                }
 
                 $params['body'][] = [
                     'update' => [

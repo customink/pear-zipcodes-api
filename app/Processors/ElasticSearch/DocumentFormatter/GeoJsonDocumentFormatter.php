@@ -11,7 +11,7 @@ class GeoJsonDocumentFormatter extends AbstractDocumentFormatter
                 'CityMixedCase' => $properties['CityMixedCase'],
                 'State' => $properties['State'],
             ],
-            'coordinates' => [(float) $properties['Longitude'], (float) $properties['Latitude']]
+            'coordinates' => null,
         ];
     }
 
