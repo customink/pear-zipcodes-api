@@ -44,20 +44,20 @@ task('deploy', [
 
 // Production Server
 server('prod1', 'prod1.zipcodes')
-    ->configFile('/home/vagrant/.ssh/config')
+    ->configFile('~/.ssh/config')
     ->env('deploy_path', '/opt/pear-zipcodes-api')
     ->env('stage_name', 'production')
     ->stage('production');
 
 server('prod2', 'prod2.zipcodes')
-    ->configFile('/home/vagrant/.ssh/config')
+    ->configFile('~/.ssh/config')
     ->env('deploy_path', '/opt/pear-zipcodes-api')
     ->env('stage_name', 'production')
     ->stage('production');
 
 // Staging Server
 server('stage1', 'stage1.zipcodes')
-    ->configFile('/home/vagrant/.ssh/config')
+    ->configFile('~/.ssh/config')
     ->env('deploy_path', '/opt/pear-zipcodes-api')
     ->env('stage_name', 'staging')
     ->stage('staging');
