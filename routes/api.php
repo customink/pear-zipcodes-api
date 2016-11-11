@@ -107,6 +107,8 @@ Route::get('zips/info', function (Request $request) {
 Route::get('zips/reverse_geocode', function (Request $request) {
     $lat = $request->query('lat');
     $long = $request->query('long');
+    $withGeoJson = $request->query('add_geojson') === 'true';
+
 
     $params = [
         'index' => config('elasticsearch.index'),
@@ -133,14 +135,22 @@ Route::get('zips/reverse_geocode', function (Request $request) {
     $results = \ES::search($params);
 
     $output = Result::search($results)
-        ->results(['wants' => 'CityMixedCase', 'resultsTransformer' => function ($document) {
+        ->results([
+          'wants' => 'CityMixedCase', 
+          'resultsTransformer' => function ($document) {
             $properties = $document['_source']['properties'];
-            return $properties['CityMixedCase'] . ', ' . $properties['State'];
-        }])
-        ->withGeoJson()
-        ->getArray();
+            return [
+              'city' => $properties['CityMixedCase'],
+              'state' => $properties['State'],
+              'full' => $properties['CityMixedCase'] . ', ' . $properties['State'],
+            ];
+        }]);
+    
+    if ($withGeoJson) {
+      return response()->jsend('success', $output->withGeoJson()->getArray());
+    }
 
-    return response()->jsend('success', $output);
+    return response()->jsend('success', $output->getArray());
 
 });
 
