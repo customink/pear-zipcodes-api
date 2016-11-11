@@ -13,7 +13,23 @@
 ### Generating the Docs
 It's using [API Blueprint](https://apiblueprint.org/) and [`aglio`](https://github.com/danielgtaylor/aglio) tool to generate the api documentation.  
 To change the API docs, go to `apidoc.md` at the root of the project.  
-Then run `aglio -i apidoc.md -o resources/views/welcome.blade.php
+Then run `aglio -i apidoc.md -o resources/views/welcome.blade.php`
+
+### Deployment
+This app uses [Deployer](http://deployer.org/), a zero-downtime deployment tool written in PHP and **heavily** inspired by Ruby's Capistrano.  
+You can check out `deploy.php` to see what is involved.
+
+Install Deployer by running `composer global require deployer/deployer:~4.0@dev herzult/php-ssh`  
+Now when you run `dep`, you should see a wealth of commands you can run to manage your deployments.  
+You'll also need to set up your `~/.ssh/config` for the servers like so:
+```
+Host prod1.nonprofit
+    HostName prod.host.example.com
+    User someuser
+    IdentityFile /home/vagrant/.ssh/id_rsa
+```
+
+To deploy, you can run `dep deploy` to deploy to staging, and `dep deploy production` to deploy to production
 
 ### TODO
 * Need to make boundary by city/state search strictly on city (right now it includes "Chicago Heights" when searching "Chicago", for example)
