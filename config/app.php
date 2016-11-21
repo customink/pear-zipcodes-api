@@ -178,6 +178,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        Aws\Laravel\AwsServiceProvider::class,
         App\Providers\ElasticSearchServiceProvider::class,
     ],
 
@@ -227,6 +228,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'ES' => App\Facades\Elastic::class,
         'Result' => App\Facades\Result::class,
+        'AWS' => Aws\Laravel\AwsFacade::class,
     ],
 
 ];
