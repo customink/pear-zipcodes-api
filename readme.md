@@ -16,7 +16,7 @@
 2. Extract the zip to your computer
 3. install `gdal` by running `brew install gdal` (assuming you have homebrew installed)
 4. Navigate to the extracted directory in your terminal and note the filename of the `shp` file
-5. run `ogr2ogr -f GeoJSON -t_srs crs:84 zipcodes.geojson [filename].shp`
+5. run `ogr2ogr -f GeoJSON zipcodes.geojson [filename].shp`
 6. upload the `zipcodes.geojson` file to the server using `scp`
 7. `scp zipcodes.geojson apache@stage1.zipcodes:/opt/pear-zipcodes-api/shared/storage/app/data/zipcodes.geojson`
 8. go the `/opt/pear-zipcodes-api/current` on the server and run `php artisan import:boundaries`.
