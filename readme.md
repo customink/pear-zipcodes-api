@@ -24,8 +24,8 @@
 
 #### Getting the `demographic.csv`
 1. Download the complete csv file from zip-codes.com
-2. rename it `demographic.cvs`
-3. upload the file to `/opt/pear-zipcodes-api/shared/storage/app/data` on the server
+2. rename it `demographic.csv`
+3. upload the file to `/opt/pear-zipcodes-api/shared/storage/app/data/demographic.csv` on the server
 4. go to `/opt/pear-zipcodes-api/current` on the server and run `php artisan import:demographic`
 
 ### Generating the Docs
