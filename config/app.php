@@ -180,6 +180,7 @@ return [
 
         Aws\Laravel\AwsServiceProvider::class,
         App\Providers\ElasticSearchServiceProvider::class,
+        Barryvdh\Cors\ServiceProvider::class,
     ],
 
     /*

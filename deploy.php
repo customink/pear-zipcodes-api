@@ -1,9 +1,12 @@
 <?php namespace Deployer;
 
 require 'recipe/laravel.php';
+require 'vendor/deployer/recipes/cachetool.php';
 
 set('ssh_type', 'ext-ssh2');
 set('default_stage', 'staging');
+
+set('cachetool', '127.0.0.1:9000');
 
 // Set configurations
 set('repository', 'git@github.com:ApparelMedia/pear-zipcodes-api.git');
@@ -25,6 +28,7 @@ task('copy:dotenv', function () {
 })->desc('Copying .env file from file published by CI WebOps');
 
 after('deploy:symlink', 'copy:dotenv');
+after('deploy:symlink', 'cachetool:clear:opcache');
 
 /**
  * Main task (Overwritting Default Laravel Task
